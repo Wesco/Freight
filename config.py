@@ -7,7 +7,8 @@ Created on Apr 30, 2014
 from ConfigParser import ConfigParser
 
 
-class config(object):
+class Config(object):
+
     def __init__(self):
         self._cfg_defaults = {'watch-dir': '/home/pi/shared/ups',
                               'poi-dir': '/home/pi/shared/POI History',
