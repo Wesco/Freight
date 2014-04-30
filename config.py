@@ -10,9 +10,9 @@ from ConfigParser import ConfigParser
 class Config(object):
 
     def __init__(self):
-        self._cfg_defaults = {'watch-dir': '/home/pi/shared/ups',
-                              'poi-dir': '/home/pi/shared/POI History',
-                              'oor-dir': '/home/pi/shared/117 History'}
+        self._cfg_defaults = {'watch-dir': '\\\\raspi\\shared\\ups',
+                              'poi-dir': '\\\\raspi\\shared\\POI History',
+                              'oor-dir': '\\\\raspi\\shared\\117 History'}
 
         self._cfg = ConfigParser(self._cfg_defaults)
         self._cfg.read('config.ini')
