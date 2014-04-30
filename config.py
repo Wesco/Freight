@@ -9,8 +9,6 @@ from ConfigParser import ConfigParser
 
 class config(object):
     def __init__(self):
-
-        # Load configuration file
         self._cfg_defaults = {'watch-dir': '/home/pi/shared/ups',
                               'poi-dir': '/home/pi/shared/POI History',
                               'oor-dir': '/home/pi/shared/117 History'}
