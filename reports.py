@@ -4,8 +4,9 @@ Created on Apr 30, 2014
 @author: TReische
 '''
 
+from pandas import merge
 from datetime import datetime, timedelta
-from os import path, listdir
+from os import listdir
 from fnmatch import fnmatch
 
 
@@ -36,5 +37,12 @@ def _get_poi_list(poi_dir):
     return poilst
 
 
-def _merge_data():
-    pass
+def _merge_data(lst, length):
+    l = length - 1
+
+    if l == 1:
+        df = merge(lst[1], lst[0], how='outer', sort=True)
+    else:
+        df = merge(lst[l], _merge_data(lst, l), how='outer', sort=True)
+
+    return df
