@@ -10,9 +10,13 @@ from ConfigParser import ConfigParser
 class Config(object):
 
     def __init__(self):
-        self._cfg_defaults = {'watch-dir': '\\\\raspi\\shared\\ups',
-                              'poi-dir': '\\\\raspi\\shared\\POI History',
-                              'oor-dir': '\\\\raspi\\shared\\117 History'}
+        self._cfg_defaults = \
+        {
+         'watch_dir': r'\\raspi\shared\ups',
+         'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
+         'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
+         'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate'
+        }
 
         self._cfg = ConfigParser(self._cfg_defaults)
         self._cfg.read('config.ini')
@@ -25,12 +29,16 @@ class Config(object):
 
     @property
     def watch_dir(self):
-        return self._cfg.get('settings', 'watch-dir')
+        return self._cfg.get('settings', 'watch_dir')
 
     @property
-    def poi_dir(self):
-        return self._cfg.get('settings', 'poi-dir')
+    def open_poi_dir(self):
+        return self._cfg.get('settings', 'open_poi_dir')
+
+    @property
+    def hist_poi_dir(self):
+        return self._cfg.get('settings', 'history_poi_dir')
 
     @property
     def oor_dir(self):
-        return self._cfg.get('settings', 'oor-dir')
+        return self._cfg.get('settings', 'oor_dir')
