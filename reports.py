@@ -4,7 +4,11 @@ Created on Apr 30, 2014
 @author: TReische
 '''
 
-from pandas import merge as _merge
+from datetime import datetime, timedelta
+from pandas.io.parsers import read_csv
+from pandas import merge
+from fnmatch import fnmatch
+from os import listdir, path
 
 
 def Poi(poi_dir):
@@ -24,10 +28,6 @@ def Oor(oor_dir):
 
 
 def _get_file_list(file_dir, name_func):
-    from fnmatch import fnmatch
-    from datetime import datetime, timedelta
-    from os import listdir, path
-
     poilst = []
     for i in range(0, 300):
         dt = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
@@ -47,7 +47,6 @@ def _read_files(file_list, header, skip_footer, usecols):
     """
     Return a list of dataframes.
     """
-    from pandas.io.parsers import read_csv
 
     lst = []
     for _file in file_list:
@@ -62,8 +61,8 @@ def _merge_data(lst, length):
     l = length - 1
 
     if l == 1:
-        df = _merge(lst[1], lst[0], how='outer', sort=True)
+        df = merge(lst[1], lst[0], how='outer', sort=True)
     else:
-        df = _merge(lst[l], _merge_data(lst, l), how='outer', sort=True)
+        df = merge(lst[l], _merge_data(lst, l), how='outer', sort=True)
 
     return df
