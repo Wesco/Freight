@@ -10,27 +10,29 @@ from os import listdir
 from fnmatch import fnmatch
 
 
-class Poi(object):
-
-    def __init__(self, poi_dir):
-        self._poi_dir = poi_dir
-        self._file_list = _get_poi_list(self._poi_dir)
-
-    @property
-    def file_list(self):
-        return self._file_list
-
-    @property
-    def dataframe(self):
-        pass
+def Poi(poi_dir):
+    name_func = [lambda x: 'POI HISTORY ' + x + '.csv',
+                 lambda x: 'POI OPEN ' + x + '.csv']
+    file_list = _get_file_list(poi_dir, name_func)
+    return _merge_data(file_list, len(file_list))
 
 
-def _get_poi_list(poi_dir):
+def Oor(oor_dir):
+    name_func = [lambda x: '3615 ' + x + 'ALLORDERS.csv']
+    file_list = _get_file_list(oor_dir, name_func)
+    return _merge_data(file_list, len(file_list))
+
+
+def _get_file_list(poi_dir, name_func):
     poilst = []
     for i in range(0, 300):
         dt = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-        poilst.append('POI HISTORY ' + dt + '.csv')
-        poilst.append('POI OPEN ' + dt + '.csv')
+
+        if type(name_func) is list:
+            for func in name_func:
+                poilst.append(func(dt))
+        else:
+            poilst.append(name_func(dt))
 
     poifiles = [x for x in listdir(poi_dir) if fnmatch(x, '*.csv')]
     poilst = [x for x in poifiles if x in poilst]
