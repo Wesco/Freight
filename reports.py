@@ -12,6 +12,10 @@ from os import listdir, path
 
 
 def Poi(poi_dir):
+    """
+    Return a DataFrame containing POI columns ' PO NUMBER' and 'ORDER'
+    """
+
     name_func = [lambda x: 'POI HISTORY ' + x + '.csv',
                  lambda x: 'POI OPEN ' + x + '.csv']
     file_list = _get_file_list(poi_dir, name_func)
