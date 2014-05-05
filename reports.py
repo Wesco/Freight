@@ -71,6 +71,10 @@ def _read_files(file_list, header, skip_footer, usecols):
 
 
 def _merge_data(lst, length, drop_on):
+    """
+    Return a merged DataFrame
+    """
+
     l = length - 1
 
     if l == 1:
