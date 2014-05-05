@@ -25,7 +25,7 @@ def Poi(poi_dir):
 
 
 def Oor(oor_dir):
-    name_func = [lambda x: '3615 ' + x + ' ALLORDERS.csv']
+    name_func = lambda x: '3615 ' + x + ' ALLORDERS.csv'
     file_list = _get_file_list(oor_dir, name_func)
     df_list = _read_files(file_list, 1, 1, [2, 3])
     df = _merge_data(df_list, len(df_list), 'ORDER NO')
