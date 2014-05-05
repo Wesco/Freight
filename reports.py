@@ -11,14 +11,19 @@ from fnmatch import fnmatch
 from os import listdir, path
 
 
-def Poi(poi_dir):
+def Poi(open_poi_dir, history_poi_dir):
     """
     Return a DataFrame containing POI columns ' PO NUMBER' and 'ORDER'
     """
 
-    name_func = [lambda x: 'POI HISTORY ' + x + '.csv',
-                 lambda x: 'POI OPEN ' + x + '.csv']
-    file_list = _get_file_list(poi_dir, name_func)
+    # Get list of POI files
+    name_func = lambda x: 'POI HISTORY ' + x + '.csv'
+    file_list = _get_file_list(open_poi_dir, name_func)
+
+    name_func = lambda x: 'POI OPEN ' + x + '.csv'
+    file_list.extend(_get_file_list(history_poi_dir, name_func))
+
+    # Read the files and merge them into a DataFrame
     df_list = _read_files(file_list, 1, 0, [1, 40])
     df = _merge_df(df_list, len(df_list), ' PO NUMBER')
     return df
