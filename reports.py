@@ -44,12 +44,7 @@ def _get_file_list(file_dir, name_func):
     poilst = []
     for i in range(0, 300):
         dt = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-
-        if type(name_func) is list:
-            for func in name_func:
-                poilst.append(func(dt))
-        else:
-            poilst.append(name_func(dt))
+        poilst.append(name_func(dt))
 
     poifiles = [x for x in listdir(file_dir) if fnmatch(x, '*.csv')]
     poilst = [path.join(file_dir, x) for x in poifiles if x in poilst]
