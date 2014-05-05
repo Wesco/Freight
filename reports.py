@@ -41,6 +41,8 @@ def Oor(oor_dir):
     # Read the files and merge them into a DataFrame
     df_list = _read_files(file_list, 1, 1, [2, 3])
     df = _merge_df(df_list, len(df_list), 'ORDER NO')
+    df.set_index(df['ORDER NO'], inplace=True)
+    del df['ORDER NO']
     return df
 
 
