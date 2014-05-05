@@ -37,6 +37,10 @@ def Oor(oor_dir):
 
 
 def _get_file_list(file_dir, name_func):
+    """
+    Return a list of files
+    """
+
     poilst = []
     for i in range(0, 300):
         dt = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
