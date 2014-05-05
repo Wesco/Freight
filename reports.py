@@ -20,7 +20,7 @@ def Poi(poi_dir):
                  lambda x: 'POI OPEN ' + x + '.csv']
     file_list = _get_file_list(poi_dir, name_func)
     df_list = _read_files(file_list, 1, 0, [1, 40])
-    df = _merge_data(df_list, len(df_list), ' PO NUMBER')
+    df = _merge_df(df_list, len(df_list), ' PO NUMBER')
     return df
 
 
@@ -32,7 +32,7 @@ def Oor(oor_dir):
     name_func = lambda x: '3615 ' + x + ' ALLORDERS.csv'
     file_list = _get_file_list(oor_dir, name_func)
     df_list = _read_files(file_list, 1, 1, [2, 3])
-    df = _merge_data(df_list, len(df_list), 'ORDER NO')
+    df = _merge_df(df_list, len(df_list), 'ORDER NO')
     return df
 
 
@@ -70,7 +70,7 @@ def _read_files(file_list, header, skip_footer, usecols):
     return lst
 
 
-def _merge_data(lst, length, drop_on):
+def _merge_df(lst, length, drop_on):
     """
     Return a merged DataFrame
     """
@@ -80,7 +80,7 @@ def _merge_data(lst, length, drop_on):
     if l == 1:
         df = merge(lst[1], lst[0], how='outer', sort=True)
     else:
-        df = merge(lst[l], _merge_data(lst, l, drop_on), how='outer', sort=True)
+        df = merge(lst[l], _merge_df(lst, l, drop_on), how='outer', sort=True)
 
     df.drop_duplicates(drop_on, inplace=True)
     return df
