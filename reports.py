@@ -49,7 +49,7 @@ def _get_file_list(file_dir, name_func):
 
 def _read_files(file_list, header, skip_footer, usecols):
     """
-    Return a list of dataframes.
+    Return a list of DataFrames.
     """
 
     lst = []
