@@ -18,10 +18,10 @@ def Poi(open_poi_dir, history_poi_dir):
 
     # Get list of POI files
     name_func = lambda x: 'POI HISTORY ' + x + '.csv'
-    file_list = _get_file_list(open_poi_dir, name_func)
+    file_list = _get_file_list(history_poi_dir, name_func)
 
     name_func = lambda x: 'POI OPEN ' + x + '.csv'
-    file_list.extend(_get_file_list(history_poi_dir, name_func))
+    file_list.extend(_get_file_list(open_poi_dir, name_func))
 
     # Read the files and merge them into a DataFrame
     df_list = _read_files(file_list, 1, 0, [1, 40])
@@ -34,8 +34,11 @@ def Oor(oor_dir):
     Return a DataFrame containing OOR columns 'CUSTOMER', and 'ORDER NO'
     """
 
+    # Get list of OOR files
     name_func = lambda x: '3615 ' + x + ' ALLORDERS.csv'
     file_list = _get_file_list(oor_dir, name_func)
+
+    # Read the files and merge them into a DataFrame
     df_list = _read_files(file_list, 1, 1, [2, 3])
     df = _merge_df(df_list, len(df_list), 'ORDER NO')
     return df
