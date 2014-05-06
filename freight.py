@@ -19,6 +19,11 @@ def get_reference(df):
         return int(result.group(0).replace("-", "").replace("3615", ""))
 
 
+def is_incoming(df):
+    string = str(df).lower()
+    return 'wesco' in string or '5521' in string
+
+
 if __name__ == '__main__':
     conf = Config()
     poi = reports.Poi(conf.open_poi_dir, conf.hist_poi_dir)
@@ -61,5 +66,23 @@ if __name__ == '__main__':
             # Merge OOR data and UPS data on order numbers
             upsdf = upsdf.join(oor, on='ORDER', how='left')
 
-            # Write the result to a file
-            upsdf.to_csv('bin\\upsdf.csv')
+            # Remove from 'ORDERS' column if a customer could not be found
+            for i in range(0, len(upsdf['ORDER'])):
+                if pd.isnull(upsdf['CUSTOMER'][i]) and upsdf['ORDER'][i] != 0:
+                    upsdf['ORDER'][i] = None
+
+            ups_stock = upsdf[upsdf['ORDER'] == 0]
+            ups_incoming = upsdf[(upsdf['Destination'].apply(is_incoming)) &
+                                 (upsdf['ORDER'] != 0)]
+            ups_outgoing = \
+                upsdf[upsdf['Destination'].apply(is_incoming) == False]
+
+            # Write to excel
+            writer = pd.ExcelWriter('bin\\upsdf.xlsx')
+
+            upsdf.to_excel(writer, 'UPS', index=False)
+            ups_stock.to_excel(writer, 'STOCK', index=False)
+            ups_incoming.to_excel(writer, 'INCOMING', index=False)
+            ups_outgoing.to_excel(writer, 'OUTGOING', index=False)
+
+            writer.save()
