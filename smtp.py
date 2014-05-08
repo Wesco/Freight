@@ -37,8 +37,8 @@ class smtp():
         """
 
         # Send the SMTP EHLO command
-        response = smtpObj.ehlo()   # response = (code, response)
-        if response[0] != SMTP_EHLO_OKAY:
+        code, response = smtpObj.ehlo()
+        if code != SMTP_EHLO_OKAY:
             raise smtplib.SMTPException("Server did not respond as expected \
             to EHLO command")
 
@@ -62,7 +62,7 @@ class smtp():
         ntlm_message = self._asbase64(sec_buffer[0].Buffer)
 
         # Send the NTLM Type 3 message -- Response Message
-        code, response = smtpObj.docmd("", ntlm_message)
+        code, response = smtpObj.docmd(ntlm_message)
         if code != SMTP_AUTH_OKAY:
             raise smtplib.SMTPAuthenticationError(code, response)
 
