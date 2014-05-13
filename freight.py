@@ -19,9 +19,9 @@ def get_reference(df):
         return int(result.group(0).replace("-", "").replace("3615", ""))
 
 
-def is_incoming(df):
+def is_incoming(df, incoming_list):
     string = str(df).lower()
-    return 'wesco' in string or '5521' in string
+    return True in [i in string for i in incoming_list]
 
 
 if __name__ == '__main__':
