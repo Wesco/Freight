@@ -21,6 +21,7 @@ class smtp():
     def __init__(self, server):
         self._smtp = smtplib.SMTP(server)
         self._connect(self._smtp)
+        self.ehlo_response = ""
 
     def send(self, To, From, Subject, Body):
         email = MIMEText(Body)
@@ -38,6 +39,7 @@ class smtp():
 
         # Send the SMTP EHLO command
         code, response = smtpObj.ehlo()
+        self.ehlo_response = response
         if code != SMTP_EHLO_OKAY:
             raise smtplib.SMTPException("Server did not respond as expected \
             to EHLO command")
