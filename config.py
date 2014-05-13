@@ -65,7 +65,3 @@ class Config(object):
         result = []
         result.extend(y for x in lst for y in x if y != '')
         return result
-
-
-c = Config()
-print c.incoming_search
