@@ -5,6 +5,8 @@ Created on Apr 30, 2014
 '''
 
 from ConfigParser import ConfigParser
+import StringIO
+import csv
 
 
 class Config(object):
@@ -15,7 +17,10 @@ class Config(object):
          'watch_dir': r'\\raspi\shared\ups',
          'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
          'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
-         'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate'
+         'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
+         'branch': '3615',
+         'email': 'treische@wesco.com',
+         'incoming_search': 'wesco,5521'
         }
 
         self._cfg = ConfigParser(self._cfg_defaults)
@@ -42,3 +47,25 @@ class Config(object):
     @property
     def oor_dir(self):
         return self._cfg.get('settings', 'oor_dir')
+
+    @property
+    def branch(self):
+        return self._cfg.get('settings', 'branch')
+
+    @property
+    def email(self):
+        return self._cfg.get('settings', 'email')
+
+    @property
+    def incoming_search(self):
+        inc = self._cfg.get('settings', 'incoming_search')
+        inc = inc.replace("\n", ",")
+        strio = StringIO.StringIO(inc)
+        lst = csv.reader(strio)
+        result = []
+        result.extend(y for x in lst for y in x if y != '')
+        return result
+
+
+c = Config()
+print c.incoming_search
