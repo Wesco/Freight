@@ -44,8 +44,7 @@ if __name__ == '__main__':
             # Match REF numbers to PO Numbers
             poi = poi[poi[' PO NUMBER'].isin([x for x in upsdf['REF']])]
             poi.set_index(' PO NUMBER', inplace=True)
-            upsdf = upsdf.join(poi, on='REF', how='left')
-
+            upsdf = pd.DataFrame.join(upsdf, poi, on='REF', how='left')
             # Get a list of reference numbers that could not be matched to POs
             unmatched = []
             for x, y in zip(upsdf['REF'], upsdf['ORDER']):
