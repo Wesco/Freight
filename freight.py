@@ -13,19 +13,23 @@ import pandas as pd
 import re
 
 
+conf = Config()
+
+
 def get_reference(df):
-    result = re.search(r"3615(-)?\d{6}", str(df))
+    branch = conf.branch
+    result = re.search(branch + r"(-)?\d{6}", str(df))
     if result is not None:
         return int(result.group(0).replace("-", "").replace("3615", ""))
 
 
-def is_incoming(df, incoming_list):
+def is_incoming(df):
+    find = conf.incoming_search
     string = str(df).lower()
-    return any([s in string for s in incoming_list])
+    return any([s in string for s in find])
 
 
 if __name__ == '__main__':
-    conf = Config()
     poi = reports.Poi(conf.open_poi_dir, conf.hist_poi_dir)
     oor = reports.Oor(conf.oor_dir)
 
