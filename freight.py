@@ -8,10 +8,11 @@ from config import Config
 import reports
 from pandas import read_excel
 from fnmatch import fnmatch
-from os import listdir, path
+from os import listdir, path, remove
 import pandas as pd
 import re
-
+from smtp import smtp
+from getpass import getuser
 
 conf = Config()
 
@@ -81,7 +82,8 @@ if __name__ == '__main__':
                 upsdf[upsdf['Destination'].apply(is_incoming) == False]
 
             # Write to excel
-            writer = pd.ExcelWriter('bin\\upsdf.xlsx')
+            filename = 'temp\\%s UPS.xlsx' % conf.branch
+            writer = pd.ExcelWriter(filename)
 
             upsdf.to_excel(writer, 'UPS', index=False)
             ups_stock.to_excel(writer, 'STOCK', index=False)
@@ -89,3 +91,14 @@ if __name__ == '__main__':
             ups_outgoing.to_excel(writer, 'OUTGOING', index=False)
 
             writer.save()
+
+            mail = smtp("email.wescodist.com")
+            mail.connect()
+            mail.send(getuser() + "@wesco.com",
+                      conf.email,
+                      "UPS",
+                      "Test email :D",
+                      [filename])
+            mail.disconnect()
+
+            remove(filename)
