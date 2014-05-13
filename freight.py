@@ -21,7 +21,7 @@ def get_reference(df):
 
 def is_incoming(df, incoming_list):
     string = str(df).lower()
-    return True in [s in string for s in incoming_list]
+    return any([s in string for s in incoming_list])
 
 
 if __name__ == '__main__':
