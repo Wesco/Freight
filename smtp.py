@@ -48,7 +48,7 @@ class smtp():
 
         # Generate the NTLM Type 1 message
         sec_buffer = None
-        err, sec_buffer = sspiclient.authorize(sec_buffer)
+        code, sec_buffer = sspiclient.authorize(sec_buffer)
         ntlm_message = self._asbase64(sec_buffer[0].Buffer)
 
         # Send the NTLM Type 1 message -- Authentication Request
@@ -60,7 +60,7 @@ class smtp():
              to NTLM negotiate message")
 
         # Generate the NTLM Type 3 message
-        err, sec_buffer = sspiclient.authorize(base64.decodestring(response))
+        code, sec_buffer = sspiclient.authorize(base64.decodestring(response))
         ntlm_message = self._asbase64(sec_buffer[0].Buffer)
 
         # Send the NTLM Type 3 message -- Response Message
