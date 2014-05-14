@@ -98,6 +98,4 @@ if __name__ == '__main__':
             ups_outgoing.to_excel(writer, 'OUTGOING', index=False)
 
             writer.save()
-
-            remove(filename)
             remove(path.join(conf.watch_dir, name))
