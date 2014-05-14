@@ -11,8 +11,6 @@ import base64
 import sspi
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.encoders import encode_base64
 from email.mime.application import MIMEApplication
 
 # NTLM Guide -- http://curl.haxx.se/rfc/ntlm.html
