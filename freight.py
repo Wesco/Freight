@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
             # Write to excel
             filename = '%s %s-%s-%s UPS.xlsx' % ((conf.branch,) + ups_dt)
-            writer = pd.ExcelWriter(filename)
+            writer = pd.ExcelWriter(path.join(conf.output_dir, filename))
 
             upsdf.to_excel(writer, 'UPS', index=False)
             ups_stock.to_excel(writer, 'STOCK', index=False)
@@ -98,15 +98,6 @@ if __name__ == '__main__':
             ups_outgoing.to_excel(writer, 'OUTGOING', index=False)
 
             writer.save()
-
-            mail = smtp("email.wescodist.com")
-            mail.connect()
-            mail.send(getuser() + "@wesco.com",
-                      conf.email,
-                      "UPS Report",
-                      "Your processed UPS report is attached.",
-                      [filename])
-            mail.disconnect()
 
             remove(filename)
             remove(path.join(conf.watch_dir, name))
