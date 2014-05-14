@@ -13,6 +13,7 @@ import pandas as pd
 import re
 from smtp import smtp
 from getpass import getuser
+import xlrd
 
 conf = Config()
 
@@ -37,10 +38,16 @@ if __name__ == '__main__':
     # Read every UPS file in the watch folder
     for name in listdir(conf.watch_dir):
         if fnmatch(name, '*.xls'):
-            upsdf = read_excel(io=path.join(conf.watch_dir, name),
+            wkbk = xlrd.open_workbook(path.join(conf.watch_dir, name),
+                                      ragged_rows=True)
+            sheet1 = wkbk.sheet_by_name("Sheet1")
+            ups_dt = xlrd.xldate_as_tuple(sheet1.cell_value(3, 2), 0)[0:3]
+
+            upsdf = read_excel(io=wkbk,
                                sheetname='Sheet2',
                                header=1,
-                               skip_footer=1)
+                               skip_footer=1,
+                               engine='xlrd')
 
             # Look for reference numbers in Reference and Destination Columns
             upsdf['REF'] = upsdf['Reference'].apply(get_reference)
@@ -82,7 +89,7 @@ if __name__ == '__main__':
                 upsdf[upsdf['Destination'].apply(is_incoming) == False]
 
             # Write to excel
-            filename = '%s UPS.xlsx' % conf.branch
+            filename = '%s %s-%s-%s UPS.xlsx' % ((conf.branch,) + ups_dt)
             writer = pd.ExcelWriter(filename)
 
             upsdf.to_excel(writer, 'UPS', index=False)
