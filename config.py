@@ -18,9 +18,10 @@ class Config(object):
          'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
          'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
+         'output_dir': r'\\br3615gaps\gaps\UPS\drop_in',
          'branch': '3615',
          'email': 'treische@wesco.com',
-         'incoming_search': 'wesco,5521'
+         'incoming_search': 'wesco,5521',
         }
 
         self._cfg = ConfigParser(self._cfg_defaults)
@@ -47,6 +48,10 @@ class Config(object):
     @property
     def oor_dir(self):
         return self._cfg.get('settings', 'oor_dir')
+
+    @property
+    def output_dir(self):
+        return self._cfg.get('settings', 'output_dir')
 
     @property
     def branch(self):
