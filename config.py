@@ -14,7 +14,7 @@ class Config(object):
     def __init__(self):
         self._cfg_defaults = \
         {
-         'watch_dir': r'\\br3615gaps\gaps\UPS',
+         'watch_dir': r'\\br3615gaps\gaps\UPS\drop_in',
          'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
          'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
