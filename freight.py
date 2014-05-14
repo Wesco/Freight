@@ -31,8 +31,8 @@ def is_incoming(df):
 
 
 if __name__ == '__main__':
-    poi = reports.Poi(conf.open_poi_dir, conf.hist_poi_dir)
-    oor = reports.Oor(conf.oor_dir)
+    poi_df = reports.Poi(conf.open_poi_dir, conf.hist_poi_dir)
+    oor_df = reports.Oor(conf.oor_dir)
 
     # Read every UPS file in the watch folder
     for name in listdir(conf.watch_dir):
@@ -47,7 +47,7 @@ if __name__ == '__main__':
             upsdf['REF'].update(upsdf['Destination'].apply(get_reference))
 
             # Match REF numbers to PO Numbers
-            poi = poi[poi[' PO NUMBER'].isin([x for x in upsdf['REF']])]
+            poi = poi_df[poi_df[' PO NUMBER'].isin([x for x in upsdf['REF']])]
             poi.set_index(' PO NUMBER', inplace=True)
             upsdf = pd.DataFrame.join(upsdf, poi, on='REF', how='left')
             # Get a list of reference numbers that could not be matched to POs
@@ -68,7 +68,7 @@ if __name__ == '__main__':
                 )
 
             # Merge OOR data and UPS data on order numbers
-            upsdf = upsdf.join(oor, on='ORDER', how='left')
+            upsdf = upsdf.join(oor_df, on='ORDER', how='left')
 
             # Remove from 'ORDERS' column if a customer could not be found
             for i in range(0, len(upsdf['ORDER'])):
@@ -82,7 +82,7 @@ if __name__ == '__main__':
                 upsdf[upsdf['Destination'].apply(is_incoming) == False]
 
             # Write to excel
-            filename = 'temp\\%s UPS.xlsx' % conf.branch
+            filename = '%s UPS.xlsx' % conf.branch
             writer = pd.ExcelWriter(filename)
 
             upsdf.to_excel(writer, 'UPS', index=False)
@@ -96,9 +96,10 @@ if __name__ == '__main__':
             mail.connect()
             mail.send(getuser() + "@wesco.com",
                       conf.email,
-                      "UPS",
-                      "Test email :D",
+                      "UPS Report",
+                      "Your processed UPS report is attached.",
                       [filename])
             mail.disconnect()
 
             remove(filename)
+            remove(path.join(conf.watch_dir, name))
