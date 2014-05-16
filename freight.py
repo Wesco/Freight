@@ -12,9 +12,10 @@ from os import listdir, path, remove
 import pandas as pd
 import re
 from smtp import smtp
-from getpass import getuser
 import xlrd
+import argparse
 
+parser = argparse.ArgumentParser()
 conf = Config()
 
 
@@ -89,7 +90,14 @@ if __name__ == '__main__':
                 upsdf[upsdf['Destination'].apply(is_incoming) == False]
 
             # Write to excel
+            i = 0
             filename = '%s %s-%s-%s UPS.xlsx' % ((conf.branch,) + ups_dt)
+            while path.isfile(path.join(conf.output_dir, filename)):
+                i = i + 1
+                filename = '%s %s-%s-%s UPS (%s).xlsx' % ((conf.branch,) +
+                                                          ups_dt +
+                                                          (i,))
+
             writer = pd.ExcelWriter(path.join(conf.output_dir, filename))
 
             upsdf.to_excel(writer, 'UPS', index=False)
@@ -99,3 +107,12 @@ if __name__ == '__main__':
 
             writer.save()
             remove(path.join(conf.watch_dir, name))
+
+            emailer = smtp("email.wescodist.com")
+            emailer.connect()
+            emailer.send(To=conf.email_to,
+                         From=conf.email_from,
+                         Subject=filename,
+                         Body="",
+                         files=[path.join(conf.output_dir, filename)])
+            emailer.disconnect()
