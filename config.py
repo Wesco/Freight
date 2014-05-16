@@ -11,7 +11,7 @@ import csv
 
 class Config(object):
 
-    def __init__(self):
+    def __init__(self, cfg_file='config.ini'):
         self._cfg_defaults = \
         {
          'watch_dir': r'\\br3615gaps\gaps\UPS\drop_in',
@@ -26,7 +26,8 @@ class Config(object):
         }
 
         self._cfg = ConfigParser(self._cfg_defaults)
-        self._cfg.read('config.ini')
+        print cfg_file
+        self._cfg.read(cfg_file)
 
         if not self._cfg.has_section('settings'):
             self._cfg.add_section('settings')
