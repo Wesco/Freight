@@ -4,14 +4,16 @@ Created on Apr 30, 2014
 @author: TReische
 '''
 
-from ConfigParser import ConfigParser
+from ConfigParser import SafeConfigParser
 import StringIO
 import csv
+from getpass import getuser
 
 
 class Config(object):
 
     def __init__(self, cfg_file='config.ini'):
+        user = getuser()
         self._cfg_defaults = \
         {
          'watch_dir': r'\\br3615gaps\gaps\UPS\drop_in',
@@ -20,17 +22,19 @@ class Config(object):
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
          'output_dir': r'\\br3615gaps\gaps\UPS',
          'branch': '3615',
-         'send_email:': False,
-         'email_to': 'treische@wesco.com',
-         'email_from': 'treische@wesco.com',
+         'send_email': "yes",
+         'send_to': user + '@wesco.com',
+         'send_from': user + '@wesco.com',
          'incoming_search': 'wesco,5521',
         }
 
-        self._cfg = ConfigParser(self._cfg_defaults)
+        self._cfg = SafeConfigParser(self._cfg_defaults)
         self._cfg.read(cfg_file)
 
-        if not self._cfg.has_section('settings'):
-            self._cfg.add_section('settings')
+        cfg_sections = ['settings', 'email', 'branch']
+        for section in cfg_sections:
+            if not self._cfg.has_section(section):
+                self._cfg.add_section(section)
 
     def reload_config(self):
         self._cfg.read('config.ini')
@@ -57,23 +61,23 @@ class Config(object):
 
     @property
     def branch(self):
-        return self._cfg.get('settings', 'branch')
+        return self._cfg.get('branch', 'branch')
 
     @property
     def send_email(self):
-        return self._cfg.getboolean('settings', 'send_email')
+        return self._cfg.getboolean('email', 'send_email')
 
     @property
     def email_to(self):
-        return self._cfg.get('settings', 'email_to')
+        return self._cfg.get('email', 'send_to')
 
     @property
     def email_from(self):
-        return self._cfg.get('settings', 'email_from')
+        return self._cfg.get('email', 'send_from')
 
     @property
     def incoming_search(self):
-        inc = self._cfg.get('settings', 'incoming_search')
+        inc = self._cfg.get('branch', 'incoming_search')
         inc = inc.replace("\n", ",")
         strio = StringIO.StringIO(inc)
         lst = csv.reader(strio)
