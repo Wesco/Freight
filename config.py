@@ -20,13 +20,13 @@ class Config(object):
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
          'output_dir': r'\\br3615gaps\gaps\UPS',
          'branch': '3615',
+         'send_email:': False,
          'email_to': 'treische@wesco.com',
          'email_from': 'treische@wesco.com',
          'incoming_search': 'wesco,5521',
         }
 
         self._cfg = ConfigParser(self._cfg_defaults)
-        print cfg_file
         self._cfg.read(cfg_file)
 
         if not self._cfg.has_section('settings'):
@@ -58,6 +58,10 @@ class Config(object):
     @property
     def branch(self):
         return self._cfg.get('settings', 'branch')
+
+    @property
+    def send_email(self):
+        return self._cfg.getboolean('settings', 'send_email')
 
     @property
     def email_to(self):

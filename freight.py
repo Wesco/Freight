@@ -113,11 +113,12 @@ for name in listdir(conf.watch_dir):
         writer.save()
         remove(path.join(conf.watch_dir, name))
 
-        emailer = smtp("email.wescodist.com")
-        emailer.connect()
-        emailer.send(To=conf.email_to,
-                     From=conf.email_from,
-                     Subject=filename,
-                     Body="",
-                     files=[path.join(conf.output_dir, filename)])
-        emailer.disconnect()
+        if conf.send_email:
+            emailer = smtp("email.wescodist.com")
+            emailer.connect()
+            emailer.send(To=conf.email_to,
+                         From=conf.email_from,
+                         Subject=filename,
+                         Body="",
+                         files=[path.join(conf.output_dir, filename)])
+            emailer.disconnect()
