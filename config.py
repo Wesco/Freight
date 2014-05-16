@@ -20,7 +20,8 @@ class Config(object):
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
          'output_dir': r'\\br3615gaps\gaps\UPS',
          'branch': '3615',
-         'email': 'treische@wesco.com',
+         'email_to': 'treische@wesco.com',
+         'email_from': 'treische@wesco.com',
          'incoming_search': 'wesco,5521',
         }
 
@@ -58,8 +59,12 @@ class Config(object):
         return self._cfg.get('settings', 'branch')
 
     @property
-    def email(self):
-        return self._cfg.get('settings', 'email')
+    def email_to(self):
+        return self._cfg.get('settings', 'email_to')
+
+    @property
+    def email_from(self):
+        return self._cfg.get('settings', 'email_from')
 
     @property
     def incoming_search(self):
