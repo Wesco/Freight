@@ -16,7 +16,13 @@ import xlrd
 import argparse
 
 parser = argparse.ArgumentParser()
-conf = Config()
+parser.add_argument('-c', '--config', help="Location of the config file")
+args = parser.parse_args()
+
+if args.config is None:
+    conf = Config()
+else:
+    conf = Config(args.config)
 
 
 def get_reference(df):
