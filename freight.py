@@ -122,3 +122,6 @@ for name in listdir(conf.watch_dir):
                          Body="",
                          files=[path.join(conf.output_dir, filename)])
             emailer.disconnect()
+
+        if not conf.write_to_disk:
+            remove(path.join(conf.output_dir, filename))
