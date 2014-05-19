@@ -22,10 +22,10 @@ class Config(object):
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
          'output_dir': r'\\br3615gaps\gaps\UPS',
          'branch': '3615',
+         'incoming_search': 'wesco,5521',
          'send_email': "yes",
          'send_to': user + '@wesco.com',
          'send_from': user + '@wesco.com',
-         'incoming_search': 'wesco,5521',
         }
 
         self._cfg = SafeConfigParser(self._cfg_defaults)
