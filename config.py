@@ -5,7 +5,7 @@ Created on Apr 30, 2014
 '''
 
 from ConfigParser import SafeConfigParser
-import StringIO
+from StringIO import StringIO
 import csv
 from getpass import getuser
 
@@ -65,10 +65,8 @@ class Config(object):
 
     @property
     def incoming_search(self):
-        inc = self._cfg.get('branch', 'incoming_search')
-        inc = inc.replace("\n", ",")
-        strio = StringIO.StringIO(inc)
-        lst = csv.reader(strio)
+        inc = self._cfg.get('branch', 'incoming_search').replace("\n", ",")
+        lst = csv.reader(StringIO(inc))
         result = []
         result.extend(y for x in lst for y in x if y != '')
         return result
