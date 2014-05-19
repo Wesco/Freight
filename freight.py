@@ -116,8 +116,8 @@ for name in listdir(conf.watch_dir):
         if conf.send_email:
             emailer = smtp("email.wescodist.com")
             emailer.connect()
-            emailer.send(To=conf.email_to,
-                         From=conf.email_from,
+            emailer.send(To=conf.send_to,
+                         From=conf.send_from,
                          Subject=filename,
                          Body="",
                          files=[path.join(conf.output_dir, filename)])

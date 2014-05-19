@@ -68,11 +68,11 @@ class Config(object):
         return self._cfg.getboolean('email', 'send_email')
 
     @property
-    def email_to(self):
+    def send_to(self):
         return self._cfg.get('email', 'send_to')
 
     @property
-    def email_from(self):
+    def send_from(self):
         return self._cfg.get('email', 'send_from')
 
     @property
