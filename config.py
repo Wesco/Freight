@@ -21,9 +21,10 @@ class Config(object):
          'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
          'output_dir': r'\\br3615gaps\gaps\UPS',
+         'write_to_disk': 'yes',
          'branch': '3615',
          'incoming_search': 'wesco,5521',
-         'send_email': "yes",
+         'send_email': 'yes',
          'send_to': user + '@wesco.com',
          'send_from': user + '@wesco.com',
         }
@@ -37,6 +38,7 @@ class Config(object):
                 self._cfg.add_section(section)
 
     def reload_config(self):
+        self._cfg = SafeConfigParser(self._cfg_defaults)
         self._cfg.read('config.ini')
 
     @property
@@ -58,6 +60,10 @@ class Config(object):
     @property
     def output_dir(self):
         return self._cfg.get('settings', 'output_dir')
+
+    @property
+    def write_to_disk(self):
+        return self._cfg.getboolean('settings', 'write_to_disk')
 
     @property
     def branch(self):
