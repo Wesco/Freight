@@ -64,6 +64,16 @@ class Config(object):
         return self._cfg.get('branch', 'branch')
 
     @property
+    def incoming_search(self):
+        inc = self._cfg.get('branch', 'incoming_search')
+        inc = inc.replace("\n", ",")
+        strio = StringIO.StringIO(inc)
+        lst = csv.reader(strio)
+        result = []
+        result.extend(y for x in lst for y in x if y != '')
+        return result
+
+    @property
     def send_email(self):
         return self._cfg.getboolean('email', 'send_email')
 
@@ -74,13 +84,3 @@ class Config(object):
     @property
     def send_from(self):
         return self._cfg.get('email', 'send_from')
-
-    @property
-    def incoming_search(self):
-        inc = self._cfg.get('branch', 'incoming_search')
-        inc = inc.replace("\n", ",")
-        strio = StringIO.StringIO(inc)
-        lst = csv.reader(strio)
-        result = []
-        result.extend(y for x in lst for y in x if y != '')
-        return result
