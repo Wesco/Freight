@@ -70,15 +70,16 @@ for name in listdir(conf.watch_dir):
                 unmatched.append(x)
 
         # Convert the list to a DataFrame and drop duplicates
-        unmatched_df = pd.DataFrame(data=unmatched, columns=['ORDER NO'])
-        unmatched_df.drop_duplicates(inplace=True)
-        unmatched_df.set_index(unmatched_df['ORDER NO'], inplace=True)
+        if unmatched:
+            unmatched_df = pd.DataFrame(data=unmatched, columns=['ORDER NO'])
+            unmatched_df.drop_duplicates(inplace=True)
+            unmatched_df.set_index(unmatched_df['ORDER NO'], inplace=True)
 
-        # If a reference number was not a PO it is assumed to be an order
-        # and is merged back into the DataFrame in the 'ORDER' column
-        upsdf['ORDER'].update(
-            upsdf.join(unmatched_df, on='REF', how='left')['ORDER NO']
-            )
+            # If a reference number was not a PO it is assumed to be an order
+            # and is merged back into the DataFrame in the 'ORDER' column
+            upsdf['ORDER'].update(
+                upsdf.join(unmatched_df, on='REF', how='left')['ORDER NO']
+                )
 
         # Merge OOR data and UPS data on order numbers
         upsdf = upsdf.join(oor_df, on='ORDER', how='left')
