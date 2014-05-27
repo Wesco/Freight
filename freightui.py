@@ -9,8 +9,8 @@ import glob
 import config
 
 
-def getconfig():
-    conf = config.Config()
+def getconfig(cfg):
+    conf = config.Config(cfg)
     return conf.raw_config()
 
 
@@ -22,6 +22,8 @@ def getfiles():
 class MainWindow(wx.Frame):
     def __init__(self, title):
         wx.Frame.__init__(self, None, -1, title)
+        self.listbox = None
+        self.listbox2 = None
         self.OnInit()
         self.Layout()
         self.Center()
@@ -43,32 +45,50 @@ class MainWindow(wx.Frame):
         vsizer.Add(panel3, 1, wx.EXPAND)
 
         # Add to panel1
+        self.listbox = wx.ListCtrl(parent=panel1,
+                             id=101,
+                             size=(120, -1),
+                             style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        self.listbox.InsertColumn(0, 'Config')
+        self.listbox.SetColumnWidth(0, 120)
+
         file_list = getfiles()
-        listbox = wx.ListBox(panel1, -1, (-1, -1), (-1, 156), file_list)
-        panel1.Sizer.Add(
-                         listbox, 1, wx.TOP | wx.RIGHT | wx.LEFT | wx.BOTTOM, 5
-                         )
+        for i in file_list:
+            self.listbox.Append((i,))
 
-        # Add to panel2
-        listbox2 = wx.ListCtrl(panel2, -1, size=(400, -1), style=wx.LC_REPORT)
+        panel1.Sizer.Add(item=self.listbox,
+                         proportion=1,
+                         flag=wx.ALL | wx.EXPAND,
+                         border=5)
 
-        # Insert columns
-        listbox2.InsertColumn(0, 'Setting')
-        listbox2.InsertColumn(1, 'Value')
-        listbox2.SetColumnWidth(0, 120)
-        listbox2.SetColumnWidth(1, 250)
+        # Create self.listbox
+        self.listbox2 = wx.ListCtrl(parent=panel2,
+                               id=102,
+                               size=(400, -1),
+                               style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
 
-        # Add data to listbox
-        lst = getconfig()
-        for y in lst:
-            listbox2.Append(y)
+        self.listbox2.InsertColumn(0, 'Setting')
+        self.listbox2.InsertColumn(1, 'Value')
+        self.listbox2.SetColumnWidth(0, 120)
+        self.listbox2.SetColumnWidth(1, 250)
 
-        # Add listbox to panel2
-        panel2.Sizer.Add(listbox2, 1, wx.TOP | wx.RIGHT, 5)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnLBSelect, id=101)
+
+        # Add self.listbox to panel2
+        panel2.Sizer.Add(item=self.listbox2,
+                         proportion=1,
+                         flag=wx.EXPAND | wx.TOP | wx.RIGHT | wx.BOTTOM,
+                         border=5)
 
         self.SetAutoLayout(True)
         self.SetSizer(vsizer)
         self.Fit()
+
+    def OnLBSelect(self, event):
+        lst = getconfig(event.Label)
+        self.listbox2.DeleteAllItems()
+        for y in lst:
+            self.listbox2.Append(y)
 
 
 class freightApp(wx.App):
