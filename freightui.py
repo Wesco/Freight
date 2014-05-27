@@ -31,7 +31,7 @@ class MainWindow(wx.Frame):
         panel1 = wx.Panel(self, -1)
         panel1.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
         panel2 = wx.Panel(self, -1)
-        panel2.SetSizer(wx.FlexGridSizer(2, 3, 5, 5))
+        panel2.SetSizer(wx.BoxSizer(wx.HORIZONTAL))
         panel3 = wx.Panel(self, -1)
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -50,16 +50,21 @@ class MainWindow(wx.Frame):
                          )
 
         # Add to panel2
-        lst = [x + " : " + str(y) for x, y in getconfig()]
-        listbox2 = wx.ListCtrl(panel2, -1, (-1, -1), (-1, 156))
-        listbox2.InsertColumn(0, 'Derp')
-        #listbox2.SetItemCount(0, len(lst))
-        for x, y in enumerate(lst):
-            listbox2.Append(y)
-            #listbox2.SetStringItem(x, 0, y)
-        panel2.Sizer.Add(listbox2, 1, wx.TOP | wx.BOTTOM | wx.RIGHT, 5)
+        lst = getconfig()
+        listbox2 = wx.ListCtrl(panel2, -1, size=(400, -1), style=wx.LC_REPORT)
 
-        # Add to panel3
+        # Insert columns
+        listbox2.InsertColumn(0, 'Setting')
+        listbox2.InsertColumn(1, 'Value')
+        listbox2.SetColumnWidth(0, 120)
+        listbox2.SetColumnWidth(1, 250)
+
+        # Add data to listbox
+        for y in lst:
+            listbox2.Append(y)
+
+        # Add listbox to panel2
+        panel2.Sizer.Add(listbox2, 1, wx.TOP | wx.RIGHT, 5)
 
         self.SetAutoLayout(True)
         self.SetSizer(vsizer)
