@@ -41,6 +41,21 @@ class Config(object):
         self._cfg = SafeConfigParser(self._cfg_defaults)
         self._cfg.read('config.ini')
 
+    def raw_config(self):
+        return [
+                ('branch', self.branch),
+                ('incoming_search', self.incoming_search),
+                ('send_email', self.send_email),
+                ('send_to', self.send_to),
+                ('send_from', self.send_from),
+                ('write_to_disk', self.write_to_disk),
+                ('output_dir', self.output_dir),
+                ('watch_dir', self.watch_dir),
+                ('open_poi_dir', self.open_poi_dir),
+                ('hist_poi_dir', self.hist_poi_dir),
+                ('oor_dir', self.oor_dir),
+                ]
+
     @property
     def watch_dir(self):
         return self._cfg.get('settings', 'watch_dir')
