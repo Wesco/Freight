@@ -50,7 +50,6 @@ class MainWindow(wx.Frame):
                          )
 
         # Add to panel2
-        lst = getconfig()
         listbox2 = wx.ListCtrl(panel2, -1, size=(400, -1), style=wx.LC_REPORT)
 
         # Insert columns
@@ -60,6 +59,7 @@ class MainWindow(wx.Frame):
         listbox2.SetColumnWidth(1, 250)
 
         # Add data to listbox
+        lst = getconfig()
         for y in lst:
             listbox2.Append(y)
 
