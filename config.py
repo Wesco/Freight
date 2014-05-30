@@ -54,7 +54,7 @@ class Config(object):
                 ('open_poi_dir', self.open_poi_dir),
                 ('hist_poi_dir', self.hist_poi_dir),
                 ('oor_dir', self.oor_dir),
-                ]
+               ]
 
     @property
     def watch_dir(self):
