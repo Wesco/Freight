@@ -42,6 +42,9 @@ class Config(object):
         self._cfg.read('config.ini')
 
     def raw_config(self):
+        return self._cfg
+
+    def config_list(self):
         return [
                 ('branch', self.branch),
                 ('incoming_search', self.incoming_search),

@@ -16,7 +16,9 @@ import xlrd
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--config', help="Location of the config file")
+parser.add_argument('-c', '--config', help='Location of the config file')
+parser.add_argument('-i', '--input', help='Input file')
+parser.add_argument('-o', '--output', help='Output file')
 args = parser.parse_args()
 
 if args.config is None:

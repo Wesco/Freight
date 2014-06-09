@@ -10,8 +10,7 @@ import config
 
 
 def getconfig(cfg):
-    conf = config.Config(cfg)
-    return conf.raw_config()
+    return config.Config(cfg).config_list()
 
 
 def getfiles():
@@ -96,14 +95,20 @@ class MainWindow(wx.Frame):
         self.outtextctrl = wx.TextCtrl(panel3, id=302)
         outbutton = wx.Button(panel3, id=303, label='Browse')
         self.Bind(wx.EVT_BUTTON, self.OnOutButton, id=303)
+        """
+        panel3.Sizer.AddMany([
+                              (upsstatictext, 0, wx.LEFT, 7),
+                              (self.upstextctrl, 0, wx.EXPAND),
+                              (upsbutton, 0, wx.RIGHT, 7)
+                              ])
+        """
 
         panel3.Sizer.AddMany([(upsstatictext, 0, wx.LEFT, 7),
                               (self.upstextctrl, 0, wx.EXPAND),
-                              (upsbutton, wx.RIGHT, 7),
+                              (upsbutton, 0, wx.RIGHT, 7),
                               (outputstatictext, 0, wx.LEFT, 7),
                               (self.outtextctrl, 0, wx.EXPAND | wx.BOTTOM),
                               (outbutton, 0, wx.BOTTOM | wx.RIGHT)])
-
         panel3.Sizer.AddGrowableCol(1, 0)
 
         # Panel 4
@@ -122,6 +127,7 @@ class MainWindow(wx.Frame):
 
     def OnLBSelect(self, event):
         lst = getconfig(event.Label)
+
         self.listbox2.DeleteAllItems()
         for y in lst:
             self.listbox2.Append(y)
