@@ -46,6 +46,24 @@ def Oor(oor_dir):
     return df
 
 
+def Gaps(gaps_dir, branch):
+    """
+    Return a DataFrame containing Gaps
+    """
+
+    file_name = ""
+    df = None
+
+    for i in range(0, 180):
+        dt = datetime.today() - timedelta.days(i)
+        file_name = "%s %s" % branch, dt
+
+    if path.isfile(path.join(gaps_dir, file_name)):
+        df = read_csv()
+
+    return df
+
+
 def _get_file_list(file_dir, name_func):
     """
     Return a list of files
