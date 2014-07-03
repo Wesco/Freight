@@ -5,7 +5,7 @@ Created on Apr 30, 2014
 '''
 
 from datetime import datetime, timedelta
-from pandas.io.parsers import read_csv
+from pandas import read_csv, read_excel
 from pandas import merge
 from fnmatch import fnmatch
 from os import listdir, path
@@ -60,6 +60,22 @@ def Gaps(gaps_dir, branch):
 
     if path.isfile(path.join(gaps_dir, file_name)):
         df = read_csv()
+
+    return df
+
+
+def SM(sm_dir):
+    """
+    Return a DataFrame containing Sales and Margin data
+    """
+
+    dt = datetime.today().strftime('%Y-%m-%d')
+    sm_file = path.join(sm_dir, 'SM ' + dt + '.xlsx')
+    df = None
+
+    if path.isfile(sm_file):
+        df = read_excel(io=sm_file, sheetname='Sheet1', parse_cols='D,K,L,O')
+        df = df[df['sales'].apply(lambda x: x > 0)].dropna()
 
     return df
 
