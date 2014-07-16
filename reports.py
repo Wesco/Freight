@@ -24,7 +24,7 @@ def Poi(open_poi_dir, history_poi_dir):
     file_list.extend(_get_file_list(open_poi_dir, name_func))
 
     # Read the files and merge them into a DataFrame
-    df_list = _read_files(file_list, 1, 0, [1, 40])
+    df_list = _read_files(file_list, 1, 0, [1, 40], {0: str, 1: str})
     df = _merge_df(df_list, len(df_list), ' PO NUMBER')
     return df
 
@@ -39,7 +39,12 @@ def Oor(oor_dir):
     file_list = _get_file_list(oor_dir, name_func)
 
     # Read the files and merge them into a DataFrame
-    df_list = _read_files(file_list, 1, 1, [2, 3])
+    df_list = _read_files(file_list,
+                          header=1,
+                          skip_footer=1,
+                          usecols=[2, 3],
+                          converters={'CUSTOMER': str, 'ORDER NO': str})
+
     df = _merge_df(df_list, len(df_list), 'ORDER NO')
     df.set_index(df['ORDER NO'], inplace=True)
     del df['ORDER NO']
@@ -95,7 +100,7 @@ def _get_file_list(file_dir, name_func):
     return poilst
 
 
-def _read_files(file_list, header, skip_footer, usecols):
+def _read_files(file_list, header, skip_footer, usecols, converters=None):
     """
     Return a list of DataFrames.
     """
@@ -105,7 +110,9 @@ def _read_files(file_list, header, skip_footer, usecols):
         lst.append(read_csv(_file,
                             header=header,
                             skip_footer=skip_footer,
-                            usecols=usecols))
+                            usecols=usecols,
+                            converters=converters,
+                            engine='python'))
     return lst
 
 

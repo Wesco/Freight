@@ -31,7 +31,7 @@ def get_reference(df):
     branch = conf.branch
     result = re.search(branch + r"(-)?\d{6}", str(df))
     if result is not None:
-        return int(result.group(0).replace("-", "").replace("3615", ""))
+        return result.group(0).replace("-", "").replace("3615", "")
 
 
 def is_incoming(df):
@@ -65,6 +65,7 @@ for name in listdir(conf.watch_dir):
         poi = poi_df[poi_df[' PO NUMBER'].isin([x for x in upsdf['REF']])]
         poi.set_index(' PO NUMBER', inplace=True)
         upsdf = pd.DataFrame.join(upsdf, poi, on='REF', how='left')
+
         # Get a list of reference numbers that could not be matched to POs
         unmatched = []
         for x, y in zip(upsdf['REF'], upsdf['ORDER']):
@@ -88,12 +89,12 @@ for name in listdir(conf.watch_dir):
 
         # Remove from 'ORDERS' column if a customer could not be found
         for i in range(0, len(upsdf['ORDER'])):
-            if pd.isnull(upsdf['CUSTOMER'][i]) and upsdf['ORDER'][i] != 0:
+            if pd.isnull(upsdf['CUSTOMER'][i]) and upsdf['ORDER'][i] != '0':
                 upsdf['ORDER'][i] = None
 
-        ups_stock = upsdf[upsdf['ORDER'] == 0]
+        ups_stock = upsdf[upsdf['ORDER'] == '0']
         ups_incoming = upsdf[(upsdf['Destination'].apply(is_incoming)) &
-                             (upsdf['ORDER'] != 0)]
+                             (upsdf['ORDER'] != '0')]
         ups_outgoing = \
             upsdf[upsdf['Destination'].apply(is_incoming) == False]
 
