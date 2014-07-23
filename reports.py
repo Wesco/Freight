@@ -5,8 +5,9 @@ Created on Apr 30, 2014
 '''
 
 from datetime import datetime, timedelta
-from pandas import read_csv, read_excel
+from pandas import read_csv
 from pandas import merge
+from pandas import concat
 from fnmatch import fnmatch
 from os import listdir, path
 
@@ -24,7 +25,11 @@ def Poi(open_poi_dir, history_poi_dir):
     file_list.extend(_get_file_list(open_poi_dir, name_func))
 
     # Read the files and merge them into a DataFrame
-    df_list = _read_files(file_list, 1, 0, [1, 40], {0: str, 1: str})
+    df_list = _read_files(file_list,
+                          header=1,
+                          skip_footer=0,
+                          usecols=[' PO NUMBER', 'ORDER'],
+                          converters={0: str, 1: str})
     df = _merge_df(df_list, len(df_list), ' PO NUMBER')
     return df
 
@@ -56,15 +61,16 @@ def Gaps(gaps_dir, branch):
     Return a DataFrame containing Gaps
     """
 
-    file_name = ""
+    fileName = ""
     df = None
 
     for i in range(0, 180):
         dt = datetime.today() - timedelta.days(i)
-        file_name = "%s %s" % branch, dt
+        fileName = "%s %s" % branch, dt
 
-    if path.isfile(path.join(gaps_dir, file_name)):
-        df = read_csv()
+    filePath = path.join(gaps_dir, fileName)
+    if path.isfile(filePath):
+        df = read_csv(filePath, )
 
     return df
 
@@ -74,15 +80,36 @@ def SM(sm_dir):
     Return a DataFrame containing Sales and Margin data
     """
 
-    dt = datetime.today().strftime('%Y-%m-%d')
-    sm_file = path.join(sm_dir, 'SM ' + dt + '.xlsx')
-    df = None
+    # List of wanted files
+    sm_list = []
+    for dt in _prev_months(6):
+        fname = 'SM ' + dt.strftime('%Y-%m') + '-01.csv'
+        sm_list.append(fname)
 
-    if path.isfile(sm_file):
-        df = read_excel(io=sm_file, sheetname='Sheet1', parse_cols='D,K,L,O')
-        df = df[df['sales'].apply(lambda x: x > 0)].dropna()
+    # List of existing files
+    sm_files = [x for x in listdir(sm_dir) if fnmatch(x, '*.csv')]
 
-    return df
+    # Wanted files that exist
+    file_list = [path.join(sm_dir, x) for x in sm_files if x in sm_list]
+
+    df_list = _read_files(file_list,
+                         header=0,
+                         skip_footer=0,
+                         usecols=['dpc', 'dpc_name', 'mfr', 'item', 'sales'],
+                         engine='c',
+                         dtype={'dpc': str,
+                                'dpc_name': str,
+                                'mfr': str,
+                                'item': str,
+                                'sales': float})
+
+    for i in range(0, len(df_list)):
+        df = df_list[i]
+        df_list[i] = df[df['sales'].apply(lambda y: y > 0)].dropna()
+
+    merged_df = concat(df_list)
+
+    return merged_df
 
 
 def _get_file_list(file_dir, name_func):
@@ -100,7 +127,8 @@ def _get_file_list(file_dir, name_func):
     return poilst
 
 
-def _read_files(file_list, header, skip_footer, usecols, converters=None):
+def _read_files(file_list, header, skip_footer, usecols,
+                engine='python', converters=None, dtype=None):
     """
     Return a list of DataFrames.
     """
@@ -112,11 +140,12 @@ def _read_files(file_list, header, skip_footer, usecols, converters=None):
                             skip_footer=skip_footer,
                             usecols=usecols,
                             converters=converters,
-                            engine='python'))
+                            dtype=dtype,
+                            engine=engine))
     return lst
 
 
-def _merge_df(lst, length, drop_on):
+def _merge_df(lst, length, drop_on=None):
     """
     Return a merged DataFrame
     """
@@ -128,5 +157,19 @@ def _merge_df(lst, length, drop_on):
     else:
         df = merge(lst[l], _merge_df(lst, l, drop_on), how='outer', sort=True)
 
-    df.drop_duplicates(drop_on, inplace=True)
+    if drop_on != None:
+        df.drop_duplicates(drop_on, inplace=True)
+
     return df
+
+
+def _prev_months(months=1):
+    dt_list = []
+    prevdt = datetime.now()
+
+    for i in range(1, months + 1):  # @UnusedVariable
+        currdt = prevdt - timedelta(days=prevdt.day)
+        dt_list.append(currdt)
+        prevdt = currdt
+
+    return dt_list
