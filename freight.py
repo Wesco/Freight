@@ -29,14 +29,16 @@ else:
 
 def get_reference(df):
     branch = conf.branch
-    result = re.search(branch + r"(-)?\d{6}", str(df))
+    result = re.search(branch + r"(-)?\d{6}",
+                       unicode(df).encode('ascii', 'ignore'))
+
     if result is not None:
         return result.group(0).replace("-", "").replace("3615", "")
 
 
 def is_incoming(df):
     find = conf.incoming_search
-    string = str(df).lower()
+    string = unicode(df).encode('ascii', 'ignore').lower()
     return any([s in string for s in find])
 
 
