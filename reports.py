@@ -4,12 +4,12 @@ Created on Apr 30, 2014
 @author: TReische
 '''
 
+import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
-from pandas import read_csv
-from pandas import merge
-from pandas import concat
 from fnmatch import fnmatch
 from os import listdir, path
+from dateutil.relativedelta import relativedelta
 
 
 def Poi(open_poi_dir, history_poi_dir):
@@ -70,7 +70,7 @@ def Gaps(gaps_dir, branch):
 
     filePath = path.join(gaps_dir, fileName)
     if path.isfile(filePath):
-        df = read_csv(filePath, )
+        df = pd.read_csv(filePath, )
 
     return df
 
@@ -107,8 +107,7 @@ def SM(sm_dir):
         df = df_list[i]
         df_list[i] = df[df['sales'].apply(lambda y: y > 0)].dropna()
 
-    merged_df = concat(df_list)
-
+    merged_df = pd.concat(df_list)
     return merged_df
 
 
@@ -135,7 +134,7 @@ def _read_files(file_list, header, skip_footer, usecols,
 
     lst = []
     for _file in file_list:
-        lst.append(read_csv(_file,
+        lst.append(pd.read_csv(_file,
                             header=header,
                             skip_footer=skip_footer,
                             usecols=usecols,
@@ -153,9 +152,9 @@ def _merge_df(lst, length, drop_on=None):
     l = length - 1
 
     if l == 1:
-        df = merge(lst[1], lst[0], how='outer', sort=True)
+        df = pd.merge(lst[1], lst[0], how='outer', sort=True)
     else:
-        df = merge(lst[l], _merge_df(lst, l, drop_on), how='outer', sort=True)
+        df = pd.merge(lst[l], _merge_df(lst, l, drop_on), how='outer', sort=True)
 
     if drop_on != None:
         df.drop_duplicates(drop_on, inplace=True)
