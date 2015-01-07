@@ -4,8 +4,8 @@ Created on Apr 30, 2014
 @author: TReische
 '''
 
-from ConfigParser import SafeConfigParser
-from StringIO import StringIO
+from configparser import SafeConfigParser
+from io import StringIO
 import csv
 from getpass import getuser
 
