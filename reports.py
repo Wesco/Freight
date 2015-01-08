@@ -76,7 +76,7 @@ def Gaps(gaps_dir, branch):
                              na_values=['  '])
             break
 
-    if type(gaps) == "NoneType":
+    if gaps is None:
         raise FileNotFoundError("Gaps report not found")
 
     return gaps
