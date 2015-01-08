@@ -20,6 +20,8 @@ class Config(object):
          'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
          'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
          'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
+         'sm_dir': r'\\br3615gaps\gaps\3615 Sales Margin',
+         'gaps_dir': r'\\br3615gaps\gaps\3615 Gaps Download',
          'output_dir': r'\\br3615gaps\gaps\UPS',
          'write_to_disk': 'yes',
          'branch': '3615',
