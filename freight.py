@@ -4,7 +4,7 @@ Created on May 5, 2014
 @author: TReische
 '''
 
-from config import Config
+from config import *
 import reports
 from pandas import read_excel
 from fnmatch import fnmatch
