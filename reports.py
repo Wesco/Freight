@@ -62,20 +62,27 @@ def Gaps(gaps_dir, branch):
     """
 
     fileName = ""
-    df = None
+    gaps = None
 
+    # Look back up to 180 days for a GAPS report
     for i in range(0, 180):
-        dt = datetime.today() - timedelta.days(i)
-        fileName = "%s %s" % branch, dt
+        dt = datetime.today() - timedelta(days=i)
+        fileName = "%s %s%s" % (branch, dt.strftime('%Y-%m-%d'), '.csv')
+        fileLoc = path.join(gaps_dir, fileName)
 
-    filePath = path.join(gaps_dir, fileName)
-    if path.isfile(filePath):
-        df = pd.read_csv(filePath, )
+        if path.isfile(fileLoc):
+            gaps = pd.read_csv(fileLoc,
+                             encoding='cp1250',
+                             na_values=['  '])
+            break
 
-    return df
+    if type(gaps) == "NoneType":
+        raise FileNotFoundError("Gaps report not found")
+
+    return gaps
 
 
-def SM(sm_dir):
+def SM(sm_dir, months=6):
     """
     Return a DataFrame containing Sales and Margin data
     """
@@ -154,21 +161,11 @@ def _merge_df(lst, length, drop_on=None):
     if l == 1:
         df = pd.merge(lst[1], lst[0], how='outer', sort=True)
     else:
-        df = pd.merge(lst[l], _merge_df(lst, l, drop_on), how='outer', sort=True)
+        df = pd.merge(lst[l], _merge_df(lst, l, drop_on),
+                      how='outer',
+                      sort=True)
 
     if drop_on != None:
         df.drop_duplicates(drop_on, inplace=True)
 
     return df
-
-
-def _prev_months(months=1):
-    dt_list = []
-    prevdt = datetime.now()
-
-    for i in range(1, months + 1):  # @UnusedVariable
-        currdt = prevdt - timedelta(days=prevdt.day)
-        dt_list.append(currdt)
-        prevdt = currdt
-
-    return dt_list
