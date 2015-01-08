@@ -145,7 +145,7 @@ class MainWindow(wx.Frame):
             self.outtextctrl.SetValue(dialog.GetPath())
 
     def ProcessReport(self, event):
-        print 'Process Report!'
+        print('Process Report!')
 
 
 class freightApp(wx.App):
