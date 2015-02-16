@@ -20,7 +20,7 @@ SMTP_AUTH_CHALLENGE = 334
 SMTP_AUTH_OKAY = 235
 
 
-class smtp():
+class Smtp():
     def __init__(self, server):
         self._smtp = smtplib.SMTP(server)
         self.ehlo_response = ""
@@ -45,9 +45,9 @@ class smtp():
 
     def connect(self):
         """Example:
-        >>> import smtplib
-        >>> smtp = smtplib.SMTP("my.smtp.server")
-        >>> connect_to_exchange_as_current_user(smtp)
+        import smtplib
+        smtp = smtplib.SMTP("my.smtp.server")
+        connect_to_exchange_as_current_user(smtp)
         """
 
         # Send the SMTP EHLO command
