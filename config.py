@@ -4,7 +4,7 @@ Created on Apr 30, 2014
 @author: TReische
 '''
 
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from io import StringIO
 import csv
 from getpass import getuser
@@ -16,22 +16,22 @@ class Config(object):
         user = getuser()
         self._cfg_defaults = \
         {
-         'watch_dir': r'\\br3615gaps\gaps\UPS\drop_in',
-         'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
-         'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
-         'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
-         'sm_dir': r'\\br3615gaps\gaps\3615 Sales Margin',
-         'gaps_dir': r'\\br3615gaps\gaps\3615 Gaps Download',
-         'output_dir': r'\\br3615gaps\gaps\UPS',
-         'write_to_disk': 'yes',
-         'branch': '3615',
-         'incoming_search': 'wesco,5521',
-         'send_email': 'yes',
-         'send_to': user + '@wesco.com',
-         'send_from': user + '@wesco.com',
+            'watch_dir': r'\\br3615gaps\gaps\UPS\drop_in',
+            'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
+            'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
+            'oor_dir': r'\\br3615gaps\gaps\3615 117 Report\DETAIL\ByOrderDate',
+            'sm_dir': r'\\br3615gaps\gaps\3615 Sales Margin',
+            'gaps_dir': r'\\br3615gaps\gaps\3615 Gaps Download',
+            'output_dir': r'\\br3615gaps\gaps\UPS',
+            'write_to_disk': 'yes',
+            'branch': '3615',
+            'incoming_search': 'wesco,5521',
+            'send_email': 'yes',
+            'send_to': user + '@wesco.com',
+            'send_from': user + '@wesco.com',
         }
 
-        self._cfg = SafeConfigParser(self._cfg_defaults)
+        self._cfg = ConfigParser(self._cfg_defaults)
         self._cfg.read(cfg_file)
 
         cfg_sections = ['settings', 'email', 'branch']
@@ -40,7 +40,7 @@ class Config(object):
                 self._cfg.add_section(section)
 
     def reload_config(self):
-        self._cfg = SafeConfigParser(self._cfg_defaults)
+        self._cfg = ConfigParser(self._cfg_defaults)
         self._cfg.read('config.ini')
 
     def raw_config(self):
