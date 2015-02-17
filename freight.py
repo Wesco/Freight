@@ -9,6 +9,7 @@ import reports
 from pandas import read_excel
 from fnmatch import fnmatch
 from os import listdir, path, remove
+from datetime import datetime
 import pandas as pd
 import re
 import smtp
@@ -61,7 +62,8 @@ if __name__ == "__main__":
             wkbk = xlrd.open_workbook(path.join(conf.watch_dir, name),
                                       ragged_rows=True)
             sheet1 = wkbk.sheet_by_name("Sheet1")
-            ups_dt = xlrd.xldate_as_tuple(sheet1.cell_value(3, 2), 0)[0:3]
+            ups_dt_tuple = xlrd.xldate_as_tuple(sheet1.cell_value(3, 2), 0)[0:3]
+            ups_date = datetime(ups_dt_tuple[0], ups_dt_tuple[1],ups_dt_tuple[2])
 
             ups_df = read_excel(io=wkbk,
                                 sheetname='Sheet2',
@@ -118,10 +120,10 @@ if __name__ == "__main__":
 
             # Write to excel
             i = 0
-            filename = '%s %s-%s-%s UPS.xlsx' % ((conf.branch,) + ups_dt)
+            filename = '%s %s-%s-%s UPS.xlsx' % ((conf.branch,) + ups_dt_tuple)
             while path.isfile(path.join(conf.output_dir, filename)):
                 i += 1
-                filename = '%s %s-%s-%s UPS (%s).xlsx' % ((conf.branch,) + ups_dt + (i,))
+                filename = '%s %s-%s-%s UPS (%s).xlsx' % ((conf.branch,) + ups_dt_tuple + (i,))
 
             writer = pd.ExcelWriter(path.join(conf.output_dir, filename))
 
