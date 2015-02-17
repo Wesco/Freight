@@ -84,6 +84,10 @@ class Config(object):
         return self._cfg.get('settings', 'sm_dir')
 
     @property
+    def gaps_dir(self):
+        return self._cfg.get('settings,', 'gaps_dir')
+
+    @property
     def output_dir(self):
         return self._cfg.get('settings', 'output_dir')
 
