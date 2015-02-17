@@ -1,8 +1,8 @@
-'''
+"""
 Created on Apr 30, 2014
 
 @author: TReische
-'''
+"""
 
 from configparser import ConfigParser
 from io import StringIO
