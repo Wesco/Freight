@@ -57,8 +57,10 @@ class Config(object):
                 ('output_dir', self.output_dir),
                 ('watch_dir', self.watch_dir),
                 ('open_poi_dir', self.open_poi_dir),
-                ('hist_poi_dir', self.hist_poi_dir),
+                ('history_poi_dir', self.hist_poi_dir),
                 ('oor_dir', self.oor_dir),
+                ('sm_dir', self.sm_dir),
+                ('gaps_dir', self.gaps_dir),
             ]
 
     @property
