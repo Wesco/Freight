@@ -11,6 +11,7 @@ from fnmatch import fnmatch
 from os import listdir, path, remove
 from datetime import datetime
 import pandas as pd
+import numpy as np
 import re
 import smtp
 import xlrd
@@ -53,9 +54,6 @@ def is_incoming(df):
 
 
 if __name__ == "__main__":
-    poi_df = reports.poi(conf.open_poi_dir, conf.hist_poi_dir)
-    oor_df = reports.customers(conf.oor_dir, conf.branch)
-
     # Read every UPS file in the watch folder
     for name in listdir(conf.watch_dir):
         if fnmatch(name, '*.xls'):
@@ -63,7 +61,7 @@ if __name__ == "__main__":
                                       ragged_rows=True)
             sheet1 = wkbk.sheet_by_name("Sheet1")
             ups_dt_tuple = xlrd.xldate_as_tuple(sheet1.cell_value(3, 2), 0)[0:3]
-            ups_date = datetime(ups_dt_tuple[0], ups_dt_tuple[1],ups_dt_tuple[2])
+            ups_date = datetime(ups_dt_tuple[0], ups_dt_tuple[1], ups_dt_tuple[2])
 
             ups_df = read_excel(io=wkbk,
                                 sheetname='Sheet2',
@@ -71,14 +69,19 @@ if __name__ == "__main__":
                                 skip_footer=1,
                                 engine='xlrd')
 
+            poi_df = reports.poi(conf.open_poi_dir, conf.hist_poi_dir)
+            oor_df = reports.customers(conf.oor_dir, conf.branch)
+            sup_df = reports.suppliers(conf.gaps_dir, conf.branch)
+            sm_df = reports.sales_margin(conf.sm_dir, 6)
+
             # Look for reference numbers in Reference and Destination Columns
             ups_df['REF'] = ups_df['Reference'].apply(get_reference)
             ups_df['REF'].update(ups_df['Destination'].apply(get_reference))
 
             # Match REF numbers to PO Numbers
-            poi = poi_df[poi_df[' PO NUMBER'].isin([x for x in ups_df['REF']])]
-            poi.set_index(' PO NUMBER', inplace=True)
-            ups_df = pd.DataFrame.join(ups_df, poi, on='REF', how='left')
+            poi_df = poi_df[poi_df[' PO NUMBER'].isin([x for x in ups_df['REF']])]
+            poi_df.set_index(' PO NUMBER', inplace=True)
+            ups_df = pd.DataFrame.join(ups_df, poi_df, on='REF', how='left')
 
             # Get a list of reference numbers that could not be matched to POs
             unmatched = []
@@ -116,7 +119,59 @@ if __name__ == "__main__":
             ups_incoming = ups_df[(ups_df['Destination'].apply(is_incoming)) & (ups_df['ORDER'] != '0')]
 
             # UPS Outgoing Sheet
-            ups_outgoing = ups_df[ups_df['Destination'].apply(not is_incoming)]
+            ups_outgoing = ups_df[ups_df['Destination'].apply(lambda dest: not is_incoming(dest))]
+
+            # Merge suppliers onto sales and margin
+            sm_df = sm_df.join(sup_df, on='sim', how='left')
+            sm_df.dropna(inplace=True)
+            sm_df.rename(columns={'Supplier_no': 'supplier_no'}, inplace=True)
+            sm_df['supplier_no'] = sm_df['supplier_no'].apply(str.upper)
+
+            # Calculate total sales for each supplier
+            sup_totals = pd.DataFrame(pd.pivot_table(data=sm_df,
+                                                     values='cost',
+                                                     index='supplier_no',
+                                                     aggfunc=np.sum))
+
+            # Calculate total sales per dpc for each supplier
+            sm_df = pd.DataFrame(pd.pivot_table(data=sm_df,
+                                                values='cost',
+                                                index=['supplier_no', 'dpc'],
+                                                aggfunc=np.sum))
+
+            # Divide dpc sales by supplier sales
+            sm_df['percent'] = sm_df['cost'] / sup_totals['cost']
+
+            # Remove cost totals since they are no longer needed
+            del sm_df['cost']
+
+            # Reset index to supplier number
+            sm_df.reset_index(level=1, inplace=True)
+
+            # Sum by supplier
+            stock_piv = pd.DataFrame(pd.pivot_table(data=ups_stock,
+                                                    values='Billed Charges',
+                                                    index='SUPPLIER',
+                                                    aggfunc=np.sum))
+
+            # Merge Sales and Margin
+            stock_piv = stock_piv.join(sm_df, how='left')
+
+            # Calculate the amount each DPC has to pay
+            stock_piv['total'] = stock_piv['Billed Charges'] * stock_piv['percent']
+
+            stock_piv['SUPPLIER'] = stock_piv.index
+
+            dpc_totals = pd.DataFrame(pd.pivot_table(data=stock_piv,
+                                                     values='total',
+                                                     index='dpc',
+                                                     aggfunc=np.sum))
+
+            ups_stock_billing = dpc_totals[dpc_totals['total'] > 10]
+            ups_stock_billing.reset_index(level=0, inplace=True)
+
+            ups_stock_not_billed = dpc_totals[dpc_totals['total'] < 10]
+            ups_stock_not_billed.reset_index(level=0, inplace=True)
 
             # Write to excel
             i = 0
@@ -128,9 +183,17 @@ if __name__ == "__main__":
             writer = pd.ExcelWriter(path.join(conf.output_dir, filename))
 
             ups_df.to_excel(writer, 'UPS', index=False)
-            ups_stock.to_excel(writer, 'STOCK', index=False)
             ups_incoming.to_excel(writer, 'INCOMING', index=False)
             ups_outgoing.to_excel(writer, 'OUTGOING', index=False)
+
+            ups_stock_billing.to_excel(writer, 'STOCK BILLING', index=False)
+            ups_stock_not_billed.to_excel(writer, 'STOCK NOT BILLED', index=False)
+            ups_stock.to_excel(writer, 'STOCK', index=False)
+            stock_piv.to_excel(writer, 'STOCK BREAKDOWN', index=False)
+
+            writer.sheets['INCOMING'].set_tab_color('green')
+            writer.sheets['OUTGOING'].set_tab_color('green')
+            writer.sheets['STOCK BILLING'].set_tab_color('green')
 
             writer.save()
             remove(path.join(conf.watch_dir, name))
