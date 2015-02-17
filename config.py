@@ -14,8 +14,7 @@ class Config(object):
 
     def __init__(self, cfg_file='config.ini'):
         user = getuser()
-        self._cfg_defaults = \
-        {
+        self._cfg_defaults = {
             'watch_dir': r'\\br3615gaps\gaps\UPS\drop_in',
             'open_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\OPEN',
             'history_poi_dir': r'\\br3615gaps\gaps\3615 POI Report\HISTORY',
@@ -47,7 +46,8 @@ class Config(object):
         return self._cfg
 
     def config_list(self):
-        return [
+        return\
+            [
                 ('branch', self.branch),
                 ('incoming_search', self.incoming_search),
                 ('send_email', self.send_email),
@@ -59,7 +59,7 @@ class Config(object):
                 ('open_poi_dir', self.open_poi_dir),
                 ('hist_poi_dir', self.hist_poi_dir),
                 ('oor_dir', self.oor_dir),
-               ]
+            ]
 
     @property
     def watch_dir(self):
@@ -76,6 +76,10 @@ class Config(object):
     @property
     def oor_dir(self):
         return self._cfg.get('settings', 'oor_dir')
+
+    @property
+    def sm_dir(self):
+        return self._cfg.get('settings', 'sm_dir')
 
     @property
     def output_dir(self):
