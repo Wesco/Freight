@@ -1,12 +1,11 @@
-'''
+"""
 Created on Apr 30, 2014
 
 @author: TReische
-'''
+"""
 
 import os
 import smtplib
-import string
 import base64
 import sspi
 from email.mime.text import MIMEText
@@ -82,7 +81,11 @@ class Smtp():
             raise smtplib.SMTPAuthenticationError(code, response)
 
     def _asbase64(self, msg):
-        return string.replace(base64.encodestring(msg), '\n', '')
+        msg = base64.encodebytes(msg)
+        if type(msg) == bytes:
+            msg = str(msg, 'ascii', 'ignore')
+
+        return str.replace(msg, '\n', '')
 
     def disconnect(self):
         self._smtp.quit()

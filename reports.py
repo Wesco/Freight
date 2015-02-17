@@ -12,7 +12,7 @@ from fnmatch import fnmatch
 from os import listdir, path
 
 
-def poi(open_poi_dir: str, history_poi_dir: str, ups_date = datetime.now()) -> pd.DataFrame:
+def poi(open_poi_dir: str, history_poi_dir: str, ups_date=datetime.now()) -> pd.DataFrame:
     """
     Return a DataFrame containing POI columns ' PO NUMBER' and 'ORDER'
     :rtype : pd.DataFrame

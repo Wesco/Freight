@@ -30,8 +30,10 @@ else:
 
 
 def get_reference(df):
+    """
+    Find Wesco reference numbers in a string
+    """
     branch = conf.branch
-
     data = str(df)
     result = None
 
@@ -42,14 +44,23 @@ def get_reference(df):
         result = re.search(r'%s(-)?\d{6}' % branch, data)
 
     if result is not None:
-        result = result.group(0).replace("-", "").replace("3615", "")
-
-    return result
+        return result.group(0).replace("-", "").replace("3615", "")
+    else:
+        return None
 
 
 def is_incoming(df):
+    """
+    Search a string for keywords to determine
+    if it is incoming outgoing UPS
+    """
     find = conf.incoming_search
-    string = str(df, 'cp1250', 'ignore').lower()
+    string = str(df)
+
+    if type(string) == bytes:
+        string = str(string, 'cp1250', 'ignore')
+
+    string = string.lower()
     return any([s in string for s in find])
 
 
@@ -65,12 +76,11 @@ if __name__ == "__main__":
 
             ups_df = read_excel(io=wkbk,
                                 sheetname='Sheet2',
-                                header=1,
                                 skip_footer=1,
                                 engine='xlrd')
 
-            poi_df = reports.poi(conf.open_poi_dir, conf.hist_poi_dir)
-            oor_df = reports.customers(conf.oor_dir, conf.branch)
+            poi_df = reports.poi(conf.open_poi_dir, conf.hist_poi_dir, ups_date)
+            oor_df = reports.customers(conf.oor_dir, conf.branch, ups_date)
             sup_df = reports.suppliers(conf.gaps_dir, conf.branch)
             sm_df = reports.sales_margin(conf.sm_dir, 6)
 
@@ -108,9 +118,8 @@ if __name__ == "__main__":
 
             # Remove from 'ORDERS' column if a customer could not be found
             for i in range(0, len(ups_df['ORDER'])):
-                if pd.isnull(ups_df['CUSTOMER'][i]) \
-                        and ups_df['ORDER'][i] != '0':
-                    ups_df['ORDER'][i] = None
+                if pd.isnull(ups_df['CUSTOMER'][i]) and ups_df['ORDER'][i] != '0':
+                    ups_df.loc[i, 'ORDER'] = None
 
             # UPS Stock Sheet
             ups_stock = ups_df[ups_df['ORDER'] == '0']
