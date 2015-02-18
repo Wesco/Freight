@@ -16,4 +16,5 @@ setup(name="freight",
       version="0.1",
       description="Freight processor",
       options={"build_exe": build_exe_options},
-      executables=[Executable("freight.py", base=base)])
+      executables=[Executable("freight.py", base=base)],
+      requires=['pandas', 'xlrd', 'numpy'])
