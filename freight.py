@@ -16,6 +16,7 @@ import re
 import smtp
 import xlrd
 import argparse
+import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config', help='Location of the config file')
@@ -64,7 +65,7 @@ def is_incoming(df):
     return any([s in string for s in find])
 
 
-if __name__ == "__main__":
+def main():
     # Read every UPS file in the watch folder
     for name in listdir(conf.watch_dir):
         if fnmatch(name, '*.xls'):
@@ -219,3 +220,11 @@ if __name__ == "__main__":
 
             if not conf.write_to_disk:
                 remove(path.join(conf.output_dir, filename))
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG, filename='freight.log')
+
+    try:
+        main()
+    except:
+        logging.exception('main:')
